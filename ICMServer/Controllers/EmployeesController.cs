@@ -11,11 +11,13 @@ namespace ICMServer.Controllers
     {
         private IRepository _repository;
         private readonly ILogger<EmployeesController> _logger;
+        private readonly IEmployeeService _employeeService;
 
-        public EmployeesController(ILogger<EmployeesController> logger, IRepository repository)
+        public EmployeesController(ILogger<EmployeesController> logger, IRepository repository, IEmployeeService employeeService)
         {
             _logger = logger;
             _repository = repository;
+            _employeeService = employeeService;
         }
 
 
@@ -80,5 +82,18 @@ namespace ICMServer.Controllers
         //    var result = _repository.DeletePatient(patientId);
         //    return Ok(result);
         //}
+
+        [HttpGet("GetEmployeeSummary/{login}/{year}/{month}")]
+        public async Task<IActionResult> GetEmployeeSummary(string login, string year, string month)
+        {
+            if (string.IsNullOrWhiteSpace(login))
+                return BadRequest("Login is required.");
+
+            var summary = await _employeeService.GetEmployeeSummaryAsync(login.Trim(), year.Trim(), month.Trim());
+            if (summary == null)
+                return NotFound(new { message = $"Employee with login '{login}' not found." });
+
+            return Ok(summary);
+        }
     }
 }
