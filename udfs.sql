@@ -1,0 +1,108 @@
+USE ICM;
+GO
+
+CREATE FUNCTION [dbo].[ufn_getSysParm](@paramName NVARCHAR(100))
+RETURNS NVARCHAR(200)
+AS
+BEGIN
+    DECLARE @val NVARCHAR(200);
+    SELECT @val = [PARAMETER_VALUE] FROM [CONFIG_SYSTEM_PARAMETERS] WHERE [PARAMETER_NAME] = @paramName;
+    RETURN ISNULL(@val, '');
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetListVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @val NUMERIC(22,7);
+    SELECT @val = SUM([LIST_VALUE]) FROM [DATA_ORDER_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@val, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetSaleVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @val NUMERIC(22,7);
+    SELECT @val = SUM([SALE_VALUE]) FROM [DATA_ORDER_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@val, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetDiscountVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @listVal NUMERIC(22,7);
+    DECLARE @saleVal NUMERIC(22,7);
+    SELECT @listVal = SUM([LIST_VALUE]), @saleVal = SUM([SALE_VALUE]) FROM [DATA_ORDER_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@listVal - @saleVal, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetDiscountPct](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @listVal NUMERIC(22,7);
+    DECLARE @saleVal NUMERIC(22,7);
+    SELECT @listVal = SUM([LIST_VALUE]), @saleVal = SUM([SALE_VALUE]) FROM [DATA_ORDER_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    IF @listVal IS NULL OR @listVal = 0 RETURN 0;
+    RETURN ((@listVal - @saleVal) / @listVal) * 100;
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetServiceListVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @val NUMERIC(22,7);
+    SELECT @val = SUM([LIST_VALUE]) FROM [DATA_ORDER_SERVICE_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@val, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetServiceSaleVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @val NUMERIC(22,7);
+    SELECT @val = SUM([SALE_VALUE]) FROM [DATA_ORDER_SERVICE_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@val, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetServiceDiscVal](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @listVal NUMERIC(22,7);
+    DECLARE @saleVal NUMERIC(22,7);
+    SELECT @listVal = SUM([LIST_VALUE]), @saleVal = SUM([SALE_VALUE]) FROM [DATA_ORDER_SERVICE_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@listVal - @saleVal, 0);
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_GetServiceDiscPct](@orderRowId NVARCHAR(30))
+RETURNS NUMERIC(22,7)
+AS
+BEGIN
+    DECLARE @listVal NUMERIC(22,7);
+    DECLARE @saleVal NUMERIC(22,7);
+    SELECT @listVal = SUM([LIST_VALUE]), @saleVal = SUM([SALE_VALUE]) FROM [DATA_ORDER_SERVICE_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    IF @listVal IS NULL OR @listVal = 0 RETURN 0;
+    RETURN ((@listVal - @saleVal) / @listVal) * 100;
+END
+GO
+
+CREATE FUNCTION [dbo].[ufn_getServiceType](@orderRowId NVARCHAR(30))
+RETURNS NVARCHAR(100)
+AS
+BEGIN
+    DECLARE @val NVARCHAR(100);
+    SELECT TOP 1 @val = [PRODUCT_TYPE] FROM [DATA_ORDER_SERVICE_ITEMS] WHERE [ORDER_ROW_ID] = @orderRowId;
+    RETURN ISNULL(@val, '');
+END
+GO

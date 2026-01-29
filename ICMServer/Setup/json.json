@@ -1,0 +1,6 @@
+{
+  "Scaffold-DbContext" "Server=s06-comserve.neopost.grp\\DEV;User=website;Password=Quad13nt24;Database=ICM;Encrypt=False",
+  "Microsoft.EntityFrameworkCore.SqlServer" "-OutputDir",
+  "Models" "-Context",
+  "ICMDBContext"
+}

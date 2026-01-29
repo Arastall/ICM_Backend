@@ -1,0 +1,6 @@
+@ICMServer_HostAddress = http://localhost:5127
+
+GET {{ICMServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
