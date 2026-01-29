@@ -59,6 +59,9 @@ builder.Services.AddCalculationServices();
 // Register OrderService
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// Register ReportService
+builder.Services.AddScoped<IReportService, ReportService>();
+
 // =====================
 // CORS
 // =====================
