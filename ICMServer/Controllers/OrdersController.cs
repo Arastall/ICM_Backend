@@ -14,6 +14,19 @@ namespace ICMServer.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet("GetOrderSummary/{orderNumber}")]
+        public async Task<IActionResult> GetOrderSummary(string orderNumber)
+        {
+            if (string.IsNullOrWhiteSpace(orderNumber))
+                return BadRequest("Order number is required.");
+
+            var summary = await _orderService.GetOrderSummaryAsync(orderNumber.Trim());
+            if (summary == null)
+                return NotFound(new { message = $"Order '{orderNumber}' not found." });
+
+            return Ok(summary);
+        }
+
         [HttpPost("ReprocessOrders")]
         public async Task<IActionResult> ReprocessOrders([FromBody] List<string> orderNumbers)
         {
